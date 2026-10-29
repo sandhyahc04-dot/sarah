@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop | Fernwick</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3ee;--ink:#10231e;--leaf:#2f6b4f;--pop:#f2b705;--line:#cfdccf;--card:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1a16;--ink:#e8f0ea;--leaf:#6fcf9c;--pop:#f2b705;--line:#244036;--card:#14261f}}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Bricolage Grotesque',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--pop);outline-offset:2px}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 5vw;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.logo{font-size:1.5rem;font-weight:800;color:var(--leaf)}
+nav{display:flex;gap:22px;align-items:center}
+nav a:hover{text-decoration:underline}
+#cnt{background:var(--pop);color:#10231e;border-radius:99px;padding:1px 9px;font-size:.85rem;font-weight:700;margin-left:4px}
+main{padding:32px 5vw;min-height:70vh}
+h1{font-size:clamp(2.2rem,6vw,4.2rem);line-height:1.05;font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.8rem;margin-bottom:18px}
+.btn,button{font:inherit;font-weight:600;background:var(--leaf);color:#fff;border:0;border-radius:8px;padding:10px 18px;cursor:pointer}
+.btn.alt{background:var(--pop);color:#10231e}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.card p{font-size:.9rem;opacity:.75;flex:1}
+.img{height:150px;border-radius:10px;display:grid;place-items:center;font-size:4rem}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:6px}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;padding:40px 0 56px}
+.hero p{max-width:46ch;margin:18px 0 24px;font-size:1.1rem}
+.hero .art{font-size:9rem;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:50% 50% 14px 14px;padding:30px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+input,select,textarea{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);width:100%}
+.tools input{max-width:260px}.tools select{width:auto}
+.chip.on{background:var(--pop);color:#10231e}
+.line{display:grid;grid-template-columns:70px 1fr auto auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.line .img{height:60px;font-size:2rem}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{padding:4px 11px}
+.sum{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:20px;max-width:420px;margin-left:auto}
+.sum div{display:flex;justify-content:space-between;padding:4px 0}
+.sum .tot{font-weight:800;font-size:1.2rem;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+.two{display:grid;grid-template-columns:1.3fr 1fr;gap:30px;align-items:start}
+form{display:grid;gap:12px}
+label{display:grid;gap:4px;font-weight:600;font-size:.9rem}
+.err{color:#d6402f;font-size:.8rem;font-weight:400}
+.empty{text-align:center;padding:60px 0}
+footer{padding:28px 5vw;border-top:1px solid var(--line);font-size:.9rem;opacity:.8}
+#toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,80px);background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:99px;transition:transform .25s}
+#toast.on{transform:translate(-50%,0)}
+@media(max-width:760px){.hero,.two{grid-template-columns:1fr}.hero .art{font-size:6rem}.line{grid-template-columns:50px 1fr auto}nav{gap:12px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+<a class="logo" href="index.html">Fernwick</a>
+<nav><a href="index.html">Home</a><a href="products.html" aria-current=page style=font-weight:700>Shop</a><a href="cart.html">Cart<span id="cnt">0</span></a></nav>
+</header>
+<main>
+
+<h2>All products</h2>
+<div class="tools">
+<input id="q" type="search" placeholder="Search plants" aria-label="Search products">
+<select id="sort" aria-label="Sort products">
+<option value="">Featured</option><option value="lo">Price: low to high</option><option value="hi">Price: high to low</option>
+</select>
+<span id="chips" style="display:flex;gap:8px;flex-wrap:wrap"></span>
+</div>
+<div class="grid" id="list"></div>
+<p class="empty" id="none" hidden>No products match. Try a different search or category.</p>
+
+</main>
+<footer>© 2026 Fernwick Plants. Free delivery over ₹999.</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+const P=[
+{id:1,n:'Monstera',p:899,c:'Large',e:'🪴',bg:'#cfe8d5',d:'Split leaves, easy care, loves bright shade.'},
+{id:2,n:'Snake Plant',p:499,c:'Low light',e:'🌿',bg:'#d9efc2',d:'Nearly unkillable. Cleans the air while you forget it.'},
+{id:3,n:'Peace Lily',p:649,c:'Low light',e:'🌷',bg:'#e3e8f6',d:'White blooms, tells you when it needs water.'},
+{id:4,n:'Jade Plant',p:399,c:'Succulents',e:'🍀',bg:'#d2ecdc',d:'Thick glossy leaves. Water every two weeks.'},
+{id:5,n:'Aloe Vera',p:299,c:'Succulents',e:'🌵',bg:'#f6ecc4',d:'Sun lover with a gel-filled leaf for burns.'},
+{id:6,n:'Rubber Plant',p:1099,c:'Large',e:'🌳',bg:'#f2d9d0',d:'Dark, shiny leaves. Grows tall by a window.'},
+{id:7,n:'Clay Pot Set',p:749,c:'Pots',e:'🏺',bg:'#f1dcc4',d:'Three drainage-hole pots in graduated sizes.'},
+{id:8,n:'Plant Food',p:249,c:'Pots',e:'🧴',bg:'#dfe9f2',d:'Liquid feed. Four drops per litre, monthly.'}
+];
+const $=s=>document.querySelector(s);
+const inr=n=>'₹'+n.toLocaleString('en-IN');
+const cart=()=>{try{return JSON.parse(localStorage.getItem('fw_cart'))||{}}catch(e){return{}}};
+const save=c=>{try{localStorage.setItem('fw_cart',JSON.stringify(c))}catch(e){}badge()};
+const badge=()=>{$('#cnt').textContent=Object.values(cart()).reduce((a,b)=>a+b,0)};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1500)};
+const add=id=>{const c=cart();c[id]=(c[id]||0)+1;save(c);toast('Added to cart')};
+const card=p=>`<article class="card"><div class="img" style="background:${p.bg}">${p.e}</div><h3>${p.n}</h3><p>${p.d}</p><div class="row"><b>${inr(p.p)}</b><button onclick="add(${p.id})">Add to cart</button></div></article>`;
+const totals=()=>{const c=cart();const sub=P.reduce((s,p)=>s+p.p*(c[p.id]||0),0);const ship=sub===0||sub>=999?0:80;return{sub,ship,tot:sub+ship}};
+const summary=t=>`<div><span>Subtotal</span><span>${inr(t.sub)}</span></div><div><span>Delivery</span><span>${t.ship?inr(t.ship):'Free'}</span></div><div class="tot"><span>Total</span><span>${inr(t.tot)}</span></div>`;
+badge();
+
+
+let cat='All';
+const cats=['All',...new Set(P.map(p=>p.c))];
+function chips(){$('#chips').innerHTML=cats.map(c=>`<button class="ghost chip ${c===cat?'on':''}" onclick="cat='${c}';chips();draw()">${c}</button>`).join('')}
+function draw(){
+  const q=$('#q').value.toLowerCase(),s=$('#sort').value;
+  let r=P.filter(p=>(cat==='All'||p.c===cat)&&(p.n+p.d).toLowerCase().includes(q));
+  if(s==='lo')r.sort((a,b)=>a.p-b.p);if(s==='hi')r.sort((a,b)=>b.p-a.p);
+  $('#list').innerHTML=r.map(card).join('');$('#none').hidden=r.length>0;
+}
+$('#q').oninput=draw;$('#sort').onchange=draw;chips();draw();
+
+</script>
+</body>
+</html>
